@@ -21,29 +21,33 @@ namespace ExcelToDb
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            string name;
-            string email;
-            string phone;
-            string gender;
-            string path = Path.GetFileName(FileUpload1.FileName);
-            path = path.Replace(" "," ");
+            ImportExcel();
+        }
+        public void ImportExcel()             //  function to import Excel file
+        { 
+        string name;
+        string email;
+        string phone;
+        string gender;
+        string path = Path.GetFileName(FileUpload1.FileName);
+        path = path.Replace(" "," ");
             FileUpload1.SaveAs(Server.MapPath("~/Excel File/")+path);
             string ExcelPath = Server.MapPath("~/Excel File/") + path;
-            OleDbConnection dbConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0; Data Source="+ ExcelPath + "; Extended Properties=Excel 12.0 ;");
-            dbConnection.Open();
-            OleDbCommand command = new OleDbCommand("select  * from [Sheet1$]",dbConnection);
-            OleDbDataReader dataReader = command.ExecuteReader();
+        OleDbConnection dbConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0; Data Source=" + ExcelPath + "; Extended Properties=Excel 12.0 ;");
+        dbConnection.Open();
+            OleDbCommand command = new OleDbCommand("select  * from [Sheet1$]", dbConnection);
+        OleDbDataReader dataReader = command.ExecuteReader();
             while (dataReader.Read())
             {
                 name = dataReader[0].ToString();
-                email= dataReader[1].ToString();
-                phone=dataReader[2].ToString();
-                gender= dataReader[3].ToString();
+                email = dataReader[1].ToString();
+                phone = dataReader[2].ToString();
+                gender = dataReader[3].ToString();
                 saveData(name, email, phone, gender);
-
             }
-        }
-        private void saveData(string name1, string email1, string phone1, string gender1)
+
+    }
+    private void saveData(string name1, string email1, string phone1, string gender1)       //for saving data in database
         {
             string connection = ConfigurationManager.ConnectionStrings["DBCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(connection))

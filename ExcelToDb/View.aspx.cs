@@ -18,7 +18,7 @@ namespace ExcelToDb
         {
             GetStudent();
         }
-        public void GetStudent()   //function to get employee list
+        public void GetStudent()   //function to get Student list
         {
 
             string connection = ConfigurationManager.ConnectionStrings["DBCS"].ConnectionString;
@@ -41,8 +41,11 @@ namespace ExcelToDb
 
         protected void btnDownload_Click(object sender, EventArgs e)
         {
-
-            string connection = ConfigurationManager.ConnectionStrings["DBCS"].ConnectionString;
+            GetExcelFile();
+        }
+        public void GetExcelFile()      //function to export to excel
+        { 
+        string connection = ConfigurationManager.ConnectionStrings["DBCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(connection))
             {
                 using (SqlCommand command = new SqlCommand("Select * from Student"))
@@ -54,15 +57,15 @@ namespace ExcelToDb
                         using(DataTable dataTable=new DataTable())
                         {
                             dataAdapter.Fill(dataTable);
-                            using (XLWorkbook wb= new XLWorkbook())
+                            using (XLWorkbook wb = new XLWorkbook())
                             {
                                 wb.Worksheets.Add(dataTable, "Student");
                                 Response.Clear();
                                 Response.Buffer = true;
                                 Response.Charset = "";
-                                Response.ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                                Response.AddHeader("content-disposition","attachment;filename=Student.xlsx");
-                                using(MemoryStream ms=new MemoryStream())
+                                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                                Response.AddHeader("content-disposition", "attachment;filename=Student.xlsx");
+                                using (MemoryStream ms = new MemoryStream())
                                 {
                                     wb.SaveAs(ms);
                                     ms.WriteTo(Response.OutputStream);
@@ -70,6 +73,7 @@ namespace ExcelToDb
                                     Response.End();
                                 }
                             }
+                            
                         }
                     }
                 }
